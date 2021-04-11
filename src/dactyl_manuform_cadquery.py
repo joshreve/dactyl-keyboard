@@ -20,6 +20,7 @@ def rad2deg(rad: float) -> float:
 # ######################
 
 show_caps = True
+include_rj9_holder = False
 
 nrows = 5  # key rows
 ncols = 6  # key columns
@@ -1477,11 +1478,13 @@ def model_side(side="right"):
     # s2 = s2.union(teensy_holder())
     s2 = s2.union(usb_holder())
 
-    s2 = s2.cut(rj9_space())
+    if include_rj9_holder:
+        s2 = s2.cut(rj9_space())
     s2 = s2.cut(usb_holder_hole())
     s2 = s2.cut(union(screw_insert_holes))
 
-    shape = shape.union(rj9_holder())
+    if include_rj9_holder:
+        shape = shape.union(rj9_holder())
     shape = shape.union(s2, tol=.01)
     # shape = shape.union(wire_posts())
     block = cq.Workplane("XY").box(350, 350, 40)
