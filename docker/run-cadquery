@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+docker build -t dactyl-keyboard .
+cd ..
+
+docker run -v $(pwd -P):/app dactyl-keyboard python /app/src/dactyl_manuform_cadquery.py 
