@@ -1,10 +1,11 @@
 import os
 import copy
 import importlib
-from generate_configuration import *
+import json
+from . import default_configuration
 
 
-base = shape_config
+base = default_configuration.shape_config
 
 config_options = [
     {
@@ -99,10 +100,17 @@ def build_release(base, configurations, engines=('solid', 'cadquery')):
                 importlib.reload(dactyl_manuform)
                 dactyl_manuform.run()
 
-if __name__ == '__main__':
+
+
+def run():
     configurations = create_config(config_options)
 
     ENGINES = ['solid', 'cadquery']
     # ENGINES = ['solid']
 
     build_release(base, configurations, ENGINES)
+
+
+
+if __name__ == '__main__':
+    run()

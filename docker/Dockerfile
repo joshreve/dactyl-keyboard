@@ -4,7 +4,6 @@ RUN apt-get update && \
     apt-get install -y libgl1-mesa-glx gcc bash && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
 RUN micromamba install -y -n base -c conda-forge -c cadquery \
     python=3 \
     cadquery=master \
@@ -14,5 +13,4 @@ RUN micromamba install -y -n base -c conda-forge -c cadquery \
 
 RUN pip3 install solidpython
 
-
-WORKDIR /app/src
+WORKDIR /app

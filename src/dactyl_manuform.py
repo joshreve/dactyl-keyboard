@@ -1,174 +1,174 @@
 import numpy as np
 from numpy import pi
+import math
 import os.path as path
 import getopt, sys
 import json
 import os
-
+from . import default_configuration
 from scipy.spatial import ConvexHull as sphull
-
-def deg2rad(degrees: float) -> float:
-    return degrees * pi / 180
-
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / pi
-
-
-###############################################
-# EXTREMELY UGLY BUT FUNCTIONAL BOOTSTRAP
-###############################################
-
-## IMPORT DEFAULT CONFIG IN CASE NEW PARAMETERS EXIST
-import generate_configuration as cfg
-for item in cfg.shape_config:
-    locals()[item] = cfg.shape_config[item]
-
-if len(sys.argv) <= 1:
-    print("NO CONFIGURATION SPECIFIED, USING run_config.json")
-    with open(os.path.join(r".", 'run_config.json'), mode='r') as fid:
-        data = json.load(fid)
-
-else:
-    ## CHECK FOR CONFIG FILE AND WRITE TO ANY VARIABLES IN FILE.
-    opts, args = getopt.getopt(sys.argv[1:], "", ["config="])
-    for opt, arg in opts:
-        if opt in ('--config'):
-            with open(os.path.join(r"..", "configs", arg + '.json'), mode='r') as fid:
-                data = json.load(fid)
-
-for item in data:
-    locals()[item] = data[item]
-
-
-# Really rough setup.  Check for ENGINE, set it not present from configuration.
-try:
-    print('Found Current Engine in Config = {}'.format(ENGINE))
-except Exception:
-    print('Engine Not Found in Config')
-    ENGINE = 'solid'
-    # ENGINE = 'cadquery'
-    print('Setting Current Engine = {}'.format(ENGINE))
-
-if save_dir in ['', None, '.']:
-    save_path = path.join(r"..", "things")
-    parts_path = path.join(r"..", "src", "parts")
-else:
-    save_path = path.join(r"..", "things", save_dir)
-    parts_path = path.join(r"..", r"..", "src", "parts")
-
-###############################################
-# END EXTREMELY UGLY BOOTSTRAP
-###############################################
-
-####################################################
-# HELPER FUNCTIONS TO MERGE CADQUERY AND OPENSCAD
-####################################################
-
-if ENGINE == 'cadquery':
-    from helpers_cadquery import *
-else:
-    from helpers_solid import *
-
-####################################################
-# END HELPER FUNCTIONS
-####################################################
 
 
 debug_exports = False
 debug_trace = False
-
+shape_config = default_configuration.shape_config
+save_path = path.join(r"..", "things")
+parts_path = path.join(r"..", "src", "parts")
+column_style = "standard"
+ 
 def debugprint(info):
     if debug_trace:
-        print(info)
+        print(info) 
+
+def deg2rad(degrees: float) -> float:
+    return degrees * pi / 180
+
+def rad2deg(rad: float) -> float:
+    return rad * 180 / pi
+
+def setup(opts):
+    global shape_config
+    global save_path
+    global parts_path
+    global column_style
+
+    with open(opts['config']['absolute_path'], mode='r') as fid:
+        data = json.load(fid)
+    for item in data:
+        shape_config[item] = data[item]
 
 
-if oled_mount_type is not None and oled_mount_type != "NONE":
-    for item in oled_configurations[oled_mount_type]:
-        locals()[item] = oled_configurations[oled_mount_type][item]
+    # Really rough setup.  Check for ENGINE, set it not present from configuration.
+    try:
+        print('Found Current Engine in Config = {}'.format(shape_config['ENGINE']))
+    except Exception:
+        print('Engine Not Found in Config')
+        shape_config['ENGINE'] = 'solid'
+        print('Setting Current Engine = {}'.format(shape_config['ENGINE']))
 
-if nrows > 5:
-    column_style = column_style_gt5
+    if shape_config['save_dir'] not in ['', None, '.']:
+        save_path = path.join(r"..", "things", shape_config['save_dir'])
+        parts_path = path.join(r"..", r"..", "src", "parts")
 
-centerrow = nrows - centerrow_offset
+    if shape_config['ENGINE'] == 'cadquery':
+        from . import helpers_cadquery as helpers
+    else:
+        from . import helpers_solid as helpers
 
-lastrow = nrows - 1
-cornerrow = lastrow - 1
-lastcol = ncols - 1
+    column_style = shape_config['column_style']
 
+    if shape_config['oled_mount_type'] is not None and shape_config['oled_mount_type'] != "NONE":
+        for item in shape_config['oled_configurations'][shape_config['oled_mount_type']]:
+            shape_config[item] = shape_config['oled_configurations'][shape_config['oled_mount_type']][item]
 
-# Derived values
-if plate_style in ['NUB', 'HS_NUB']:
-    keyswitch_height = nub_keyswitch_height
-    keyswitch_width = nub_keyswitch_width
-elif plate_style in ['UNDERCUT', 'HS_UNDERCUT', 'NOTCH', 'HS_NOTCH']:
-    keyswitch_height = undercut_keyswitch_height
-    keyswitch_width = undercut_keyswitch_width
-else:
-    keyswitch_height = hole_keyswitch_height
-    keyswitch_width = hole_keyswitch_width
+    if shape_config['nrows'] > 5:
+        shape_config['column_style'] = shape_config['column_style_gt5']
 
-if 'HS_' in plate_style:
-    symmetry = "asymmetric"
-    plate_file = path.join(parts_path, r"hot_swap_plate")
-    plate_offset = 0.0
+    shape_config['centerrow'] = shape_config['nrows'] - shape_config['centerrow_offset']
 
-if (trackball_in_wall or ('TRACKBALL' in thumb_style)) and not ball_side == 'both':
-    symmetry = "asymmetric"
-
-mount_width = keyswitch_width + 2 * plate_rim
-mount_height = keyswitch_height + 2 * plate_rim
-mount_thickness = plate_thickness
-
-if default_1U_cluster and thumb_style=='DEFAULT':
-    double_plate_height = (.7*sa_double_length - mount_height) / 3
-elif thumb_style=='DEFAULT':
-    double_plate_height = (.95*sa_double_length - mount_height) / 3
-else:
-    double_plate_height = (sa_double_length - mount_height) / 3
+    shape_config['lastrow'] = shape_config['nrows'] - 1
+    shape_config['cornerrow'] = shape_config['lastrow'] - 1
+    shape_config['lastcol'] = shape_config['ncols'] - 1
 
 
+    # Derived values
+    if shape_config['plate_style'] in ['NUB', 'HS_NUB']:
+        shape_config['keyswitch_height'] = shape_config['nub_keyswitch_height']
+        shape_config['keyswitch_width'] = shape_config['nub_keyswitch_width']
+    elif shape_config['plate_style'] in ['UNDERCUT', 'HS_UNDERCUT', 'NOTCH', 'HS_NOTCH']:
+        shape_config['keyswitch_height'] = shape_config['undercut_keyswitch_height']
+        shape_config['keyswitch_width'] = shape_config['undercut_keyswitch_width']
+    else:
+        shape_config['keyswitch_height'] = shape_config['hole_keyswitch_height']
+        shape_config['keyswitch_width'] = shape_config['hole_keyswitch_width']
 
-if oled_mount_type is not None and oled_mount_type != "NONE":
-    left_wall_x_offset = oled_left_wall_x_offset_override
-    left_wall_z_offset = oled_left_wall_z_offset_override
-    left_wall_lower_y_offset = oled_left_wall_lower_y_offset
-    left_wall_lower_z_offset = oled_left_wall_lower_z_offset
+    if 'HS_' in shape_config['plate_style']:
+        shape_config['symmetry'] = "asymmetric"
+        shape_config['plate_file'] = path.join(parts_path, r"hot_swap_plate")
+        shape_config['plate_offset'] = 0.0
+
+    if (shape_config['trackball_in_wall'] or ('TRACKBALL' in shape_config['thumb_style'])) and not shape_config['ball_side'] == 'both':
+        shape_config['symmetry'] = "asymmetric"
+
+    shape_config['mount_width'] = shape_config['keyswitch_width'] + 2 * shape_config['plate_rim']
+    shape_config['mount_height'] = shape_config['keyswitch_height'] + 2 * shape_config['plate_rim']
+    shape_config['mount_thickness'] = shape_config['plate_thickness']
+
+    if shape_config['default_1U_cluster'] and shape_config['thumb_style']=='DEFAULT':
+        shape_config['double_plate_height'] = (.7*shape_config['sa_double_length'] - shape_config['mount_height']) / 3
+    elif shape_config['thumb_style']=='DEFAULT':
+        shape_config['double_plate_height'] = (.95*shape_config['sa_double_length'] - shape_config['mount_height']) / 3
+    else:
+        shape_config['double_plate_height'] = (shape_config['sa_double_length'] - shape_config['mount_height']) / 3
 
 
 
-cap_top_height = plate_thickness + sa_profile_key_height
-row_radius = ((mount_height + extra_height) / 2) / (np.sin(alpha / 2)) + cap_top_height
-column_radius = (
-                        ((mount_width + extra_width) / 2) / (np.sin(beta / 2))
-                ) + cap_top_height
-column_x_delta = -1 - column_radius * np.sin(beta)
-column_base_angle = beta * (centercol - 2)
+    if shape_config['oled_mount_type'] is not None and shape_config['oled_mount_type'] != "NONE":
+        shape_config['left_wall_x_offset'] = shape_config['oled_left_wall_x_offset_override']
+        shape_config['left_wall_z_offset'] = shape_config['oled_left_wall_z_offset_override']
+        shape_config['left_wall_lower_y_offset'] = shape_config['oled_left_wall_lower_y_offset']
+        shape_config['left_wall_lower_z_offset'] = shape_config['oled_left_wall_lower_z_offset']
 
 
 
-
-teensy_width = 20
-teensy_height = 12
-teensy_length = 33
-teensy2_length = 53
-teensy_pcb_thickness = 2
-teensy_offset_height = 5
-teensy_holder_top_length = 18
-teensy_holder_width = 7 + teensy_pcb_thickness
-teensy_holder_height = 6 + teensy_width
+    shape_config['cap_top_height'] = shape_config['plate_thickness'] + shape_config['sa_profile_key_height']
+    shape_config['row_radius'] = ((shape_config['mount_height'] + shape_config['extra_height']) / 2) / (np.sin(shape_config['alpha'] / 2)) + shape_config['cap_top_height']
+    shape_config['column_radius'] = (
+                            ((shape_config['mount_width'] + shape_config['extra_width']) / 2) / (np.sin(shape_config['beta'] / 2))
+                    ) + shape_config['cap_top_height']
+    shape_config['column_x_delta'] = -1 - shape_config['column_radius'] * np.sin(shape_config['beta'])
+    shape_config['column_base_angle'] = shape_config['beta'] * (shape_config['centercol'] - 2)
 
 
-# save_path = path.join("..", "things", save_dir)
-if not path.isdir(save_path):
-    os.mkdir(save_path)
+    shape_config['teensy_width'] = 20
+    shape_config['teensy_height'] = 12
+    shape_config['teensy_length'] = 33
+    shape_config['teensy2_length'] = 53
+    shape_config['teensy_pcb_thickness'] = 2
+    shape_config['teensy_offset_height'] = 5
+    shape_config['teensy_holder_top_length'] = 18
+    shape_config['teensy_holder_width'] = 7 + shape_config['teensy_pcb_thickness']
+    shape_config['teensy_holder_height'] = 6 + shape_config['teensy_width']
+
+
+    shape_config['rj9_start'] = list(
+        np.array([0, -3, 0])
+        + np.array(
+            key_position(
+                list(np.array(wall_locate3(0, 1)) + np.array([0, (shape_config['mount_height'] / 2), 0])),
+                0,
+                0,
+            )
+        )
+    )
+    rj9_position = (shape_config['rj9_start'][0], shape_config['rj9_start'][1], 11)
+
+    shape_config['usb_holder_position'] = key_position(
+        list(np.array(wall_locate2(0, 1)) + np.array([0, (shape_config['mount_height'] / 2), 0])), 1, 0
+    )
+    shape_config['usb_holder_size'] = [6.5, 10.0, 13.6]
+    shape_config['usb_holder_thickness'] = 4
+
+
+    external_start = list(
+        # np.array([0, -3, 0])
+        np.array([shape_config['external_holder_width'] / 2, 0, 0])
+        + np.array(
+            key_position(
+                list(np.array(wall_locate3(0, 1)) + np.array([0, (shape_config['mount_height'] / 2), 0])),
+                0,
+                0,
+            )
+        )
+    )
+
+    if not path.isdir(save_path):
+        os.mkdir(save_path)
+
 
 
 def column_offset(column: int) -> list:
     return column_offsets[column]
-
-# column_style='fixed'
-
 
 def single_plate(cylinder_segments=100, side="right"):
 
@@ -2120,7 +2120,6 @@ def tbcj_thumb_layout(shape):
 #
 #    return translate(shape, (points_x[i] * radius / 2, points_y[i] * radius / 2, 0))
 
-import math
 def oct_corner(i, diameter, shape):
     radius = diameter / 2
     i = (i+1)%8
@@ -3134,20 +3133,6 @@ def case_walls(side='right'):
     )
 
 
-rj9_start = list(
-    np.array([0, -3, 0])
-    + np.array(
-        key_position(
-            list(np.array(wall_locate3(0, 1)) + np.array([0, (mount_height / 2), 0])),
-            0,
-            0,
-        )
-    )
-)
-
-rj9_position = (rj9_start[0], rj9_start[1], 11)
-
-
 def rj9_cube():
     debugprint('rj9_cube()')
     shape = box(14.78, 13, 22.38)
@@ -3169,11 +3154,7 @@ def rj9_holder():
     return shape
 
 
-usb_holder_position = key_position(
-    list(np.array(wall_locate2(0, 1)) + np.array([0, (mount_height / 2), 0])), 1, 0
-)
-usb_holder_size = [6.5, 10.0, 13.6]
-usb_holder_thickness = 4
+
 
 
 def usb_holder():
@@ -3205,18 +3186,6 @@ def usb_holder_hole():
     )
     return shape
 
-
-external_start = list(
-    # np.array([0, -3, 0])
-    np.array([external_holder_width / 2, 0, 0])
-    + np.array(
-        key_position(
-            list(np.array(wall_locate3(0, 1)) + np.array([0, (mount_height / 2), 0])),
-            0,
-            0,
-        )
-    )
-)
 
 def external_mount_hole():
     print('external_mount_hole()')
@@ -4036,7 +4005,11 @@ def baseplate(wedge_angle=None, side='right'):
 
         return sl.projection(cut=True)(shape)
 
-def run():
+def run(opts):
+    setup(opts)
+    print(save_path)
+    print(parts_path)
+    exit(0)
 
     mod_r = model_side(side="right")
     export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
@@ -4080,5 +4053,3 @@ def run():
 
 # base = baseplate()
 # export_file(shape=base, fname=path.join(save_path, config_name + r"_plate"))
-if __name__ == '__main__':
-    run()
