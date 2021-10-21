@@ -7,8 +7,10 @@
 .lein-*
 *.gcode
 *.scad
+*.dxf
 /target
 .idea/
+.idea
 .DS_Store
 *.FCStd1
 debug_*
@@ -19,3 +21,6 @@ things/
 things/*.scad
 things/*.step
 things/*.stl
+.iml
+**/*.iml
+

@@ -1,0 +1,358 @@
+---
+ENGINE: solid
+save_dir: "."
+config_name: DM_WILD_PLAY
+show_caps: false
+show_pcbs: false
+nrows: 6
+ncols: 6
+alpha: 0.26179916666666664
+beta: 0.08726638888888888
+centercol: 3
+centerrow_offset: 3
+tenting_angle: 0.26179916666666664
+symmetry: symmetric
+column_style_gt5: orthographic
+column_style: standard
+thumb_offsets:
+  - 6
+  - -3
+  - 7
+keyboard_z_offset: 11
+thumb_style: TRACKBALL_WILD
+default_1U_cluster: true
+minidox_Usize: 1.6
+thumb_plate_tr_rotation: 0
+thumb_plate_tl_rotation: 0
+thumb_plate_mr_rotation: 0
+thumb_plate_ml_rotation: 0
+thumb_plate_br_rotation: 0
+thumb_plate_bl_rotation: 0
+trackball_in_wall: false
+tbiw_ball_center_row: 0.2
+tbiw_translational_offset:
+  - 0
+  - 0
+  - 0
+tbiw_rotation_offset:
+  - 0
+  - 0
+  - 0
+tbiw_left_wall_x_offset_override: 50
+tbiw_left_wall_z_offset_override: 0
+tbiw_left_wall_lower_y_offset: 0
+tbiw_left_wall_lower_z_offset: 0
+tbiw_oled_center_row: 0.75
+tbiw_oled_translation_offset:
+  - -3.5
+  - 0
+  - 1.5
+tbiw_oled_rotation_offset:
+  - 0
+  - 0
+  - 0
+other_thumb: DEFAULT
+wild_key_diameter: 70
+wild_translation_offset:
+  - 10
+  - 0
+  - -8
+wild_rotation_offset:
+  - 10
+  - -10
+  - 0
+wild_key_translation_offsets:
+  - - 0
+    - -5
+    - 3
+  - - 0
+    - -5
+    - 1
+  - - 0
+    - -1
+    - 3
+  - - 0
+    - -4
+    - 4
+wild_key_rotation_offsets:
+  - - -5
+    - 0
+    - 15
+  - - 0
+    - 5
+    - -5
+  - - 0
+    - -20
+    - 43
+  - - 25
+    - 0
+    - 0
+tbcj_inner_diameter: 42
+tbcj_thickness: 2
+tbcj_outer_diameter: 53
+tbjs_key_diameter: 70
+tbjs_translation_offset:
+  - 0
+  - 0
+  - 10
+tbjs_rotation_offset:
+  - 0
+  - 0
+  - 0
+tbjs_key_translation_offsets:
+  - - 0
+    - 0
+    - -8
+  - - 0
+    - 0
+    - -8
+  - - 0
+    - 0
+    - -8
+  - - 0
+    - 0
+    - -8
+tbjs_key_rotation_offsets:
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - 0
+    - 0
+trackball_modular: false
+trackball_Usize: 1.5
+ball_side: right
+ball_diameter: 34
+ball_wall_thickness: 3
+ball_gap: 1
+trackball_hole_diameter: 36.5
+trackball_hole_height: 40
+trackball_plate_thickness: 2
+trackball_plate_width: 2
+tb_socket_translation_offset:
+  - 0
+  - 0
+  - 2
+tb_socket_rotation_offset:
+  - 0
+  - 0
+  - 0
+tb_sensor_translation_offset:
+  - 0
+  - 0
+  - 0
+tb_sensor_rotation_offset:
+  - 0
+  - 0
+  - 0
+pinky_1_5U: true
+first_1_5U_row: 0
+last_1_5U_row: 5
+extra_width: 2.5
+extra_height: 1
+wall_z_offset: 15
+wall_x_offset: 5
+wall_y_offset: 6
+left_wall_x_offset: 12
+left_wall_z_offset: 3
+left_wall_lower_y_offset: 0
+left_wall_lower_z_offset: 0
+wall_thickness: 4.5
+wall_base_y_thickness: 4.5
+wall_base_x_thickness: 4.5
+wall_base_back_thickness: 4.5
+fixed_angles:
+  - 0.17453277777777776
+  - 0.17453277777777776
+  - 0
+  - 0
+  - 0
+  - -0.26179916666666664
+  - -0.26179916666666664
+fixed_x:
+  - -41.5
+  - -22.5
+  - 0
+  - 20.3
+  - 41.4
+  - 65.5
+  - 89.6
+fixed_z:
+  - 12.1
+  - 8.3
+  - 0
+  - 5
+  - 10.7
+  - 14.5
+  - 17.5
+fixed_tenting: 0
+plate_style: HS_NOTCH
+hole_keyswitch_height: 14
+hole_keyswitch_width: 14
+nub_keyswitch_height: 14.4
+nub_keyswitch_width: 14.4
+undercut_keyswitch_height: 14
+undercut_keyswitch_width: 14
+notch_width: 5
+sa_profile_key_height: 12.7
+sa_length: 18.5
+sa_double_length: 37.5
+plate_thickness: 5.1
+plate_rim: 2
+clip_thickness: 1.4
+clip_undercut: 1
+undercut_transition: 0.2
+plate_file_name: hotswap_holder_low_6
+plate_offset: 0
+oled_mount_type:
+oled_center_row: 1.25
+oled_translation_offset:
+  - 0
+  - 0
+  - 4
+oled_rotation_offset:
+  - 0
+  - 0
+  - 0
+oled_configurations:
+  UNDERCUT:
+    oled_mount_width: 15
+    oled_mount_height: 35
+    oled_mount_rim: 3
+    oled_mount_depth: 6
+    oled_mount_cut_depth: 20
+    oled_mount_location_xyz:
+      - -80
+      - 20
+      - 45
+    oled_mount_rotation_xyz:
+      - 13
+      - 0
+      - -6
+    oled_left_wall_x_offset_override: 28
+    oled_left_wall_z_offset_override: 0
+    oled_left_wall_lower_y_offset: 12
+    oled_left_wall_lower_z_offset: 5
+    oled_mount_undercut: 1
+    oled_mount_undercut_thickness: 2
+  SLIDING:
+    oled_mount_width: 12.5
+    oled_mount_height: 25
+    oled_mount_rim: 2.5
+    oled_mount_depth: 8
+    oled_mount_cut_depth: 20
+    oled_mount_location_xyz:
+      - -78
+      - 10
+      - 41
+    oled_mount_rotation_xyz:
+      - 6
+      - 0
+      - -3
+    oled_left_wall_x_offset_override: 24
+    oled_left_wall_z_offset_override: 0
+    oled_left_wall_lower_y_offset: 12
+    oled_left_wall_lower_z_offset: 5
+    oled_thickness: 4.2
+    oled_edge_overlap_end: 6.5
+    oled_edge_overlap_connector: 5.5
+    oled_edge_overlap_thickness: 2.5
+    oled_edge_overlap_clearance: 2.5
+    oled_edge_chamfer: 2
+  CLIP:
+    oled_mount_width: 12.5
+    oled_mount_height: 39
+    oled_mount_rim: 2
+    oled_mount_depth: 7
+    oled_mount_cut_depth: 20
+    oled_mount_location_xyz:
+      - -78
+      - 20
+      - 42
+    oled_mount_rotation_xyz:
+      - 12
+      - 0
+      - -6
+    oled_left_wall_x_offset_override: 24
+    oled_left_wall_z_offset_override: 0
+    oled_left_wall_lower_y_offset: 12
+    oled_left_wall_lower_z_offset: 5
+    oled_thickness: 4.2
+    oled_mount_bezel_thickness: 3.5
+    oled_mount_bezel_chamfer: 2
+    oled_mount_connector_hole: 6
+    oled_screen_start_from_conn_end: 6.5
+    oled_screen_length: 24.5
+    oled_screen_width: 10.5
+    oled_clip_thickness: 1.5
+    oled_clip_width: 6
+    oled_clip_overhang: 1
+    oled_clip_extension: 5
+    oled_clip_width_clearance: 0.5
+    oled_clip_undercut: 0.5
+    oled_clip_undercut_thickness: 2.5
+    oled_clip_y_gap: 0.2
+    oled_clip_z_gap: 0.2
+web_thickness: 4
+post_size: 0.1
+post_adj: 0
+screws_offset: INSIDE
+screw_insert_height: 3.8
+screw_insert_bottom_radius: 2.655
+screw_insert_top_radius: 2.55
+wire_post_height: 7
+wire_post_overhang: 3.5
+wire_post_diameter: 2.6
+controller_mount_type: EXTERNAL
+external_holder_height: 12.5
+external_holder_width: 28.75
+external_holder_xoffset: -5
+external_holder_yoffset: -4.5
+screw_hole_diameter: 2
+base_thickness: 3
+base_offset: 3
+base_rim_thickness: 5
+screw_cbore_diameter: 4
+screw_cbore_depth: 2
+plate_holes: false
+plate_holes_xy_offset:
+  - 0
+  - 0
+plate_holes_width: 14.3
+plate_holes_height: 14.3
+plate_holes_diameter: 1.7
+plate_holes_depth: 20
+pcb_width: 18
+pcb_height: 18
+pcb_thickness: 1.5
+pcb_hole_diameter: 2
+pcb_hole_pattern_width: 14.3
+pcb_hole_pattern_height: 14.3
+column_offsets:
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - 2.82
+    - -4.5
+  - - 0
+    - 0
+    - 0
+  - - 0
+    - -6
+    - 5
+  - - 0
+    - -6
+    - 5
+  - - 0
+    - -6
+    - 5
