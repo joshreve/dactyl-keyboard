@@ -53,6 +53,13 @@ build-models: check-requirements ## Build models.
 	echo "Done"
 .PHONY: config
 
+build-models: check-requirements ## Build models.
+	@echo "\nGenerate autoloader models..\n" && \
+	cd ${current_dir} && \
+	${DOCKER_CMD} run --rm --name DM-autoloader -v ${source_dir}:/app/src -v ${artifact_dir}:/app/things -v ${config_dir}:/app/configs dactyl-keyboard python3 -i autoloader.py && \
+	echo "Done"
+.PHONY: config
+
 
 shell: check-requirements ## Open an interactive shell inside a container.
 	@${DOCKER_CMD} run --rm -it --name DM-shell -v ${source_dir}:/app/src -v ${artifact_dir}:/app/things -v ${config_dir}:/app/configs dactyl-keyboard bash && \
