@@ -42,6 +42,7 @@ dactyl-keyboard image and 4 containers:
 - DM-shell: starts an interactive session to manually run from shell
   - tip: run bash after entering to get a better shell environment
 - DM-release-build: runs `model_builder.py` to generate a number of keyboard variants
+- DM-autoloader: runs `autoloader.py` that runs `dactyl_manuform.py` whenever run_config.json is saved
 
 All apps bindmount the `src` and `things` directory to allow editing in the host and running in the
 container.  While not exactly hard drive space efficient, this hopefully helps those having issues getting
@@ -203,7 +204,7 @@ You can install the application in a regular python environment, but it is not r
 * ~~Run `python dactyl_manuform_cadquery.py` or `python3 dactyl_manuform_cadquery.py`~~ 
 * ~~Run `python dactyl_manuform.py` or `python3 dactyl_manuform.py`~~
 * Run `generate_configuration.py` or directly edit `run_config.json` to configure the design
-* Run `dactyl_manuform.py` to create the geometry (ENGINE variable in run determines method)
+* Run `dactyl_manuform.py` to create the geometry (ENGINE variable in run determines method) `or` run `autoloader.py` to generate new design every time you save the config file
 * This will regenerate the `things/` files (or in subdirectory if defined in config)
     * `*left.*`
     * `*right.*`

@@ -13,9 +13,10 @@ container=""
     # the positional name {positional}Container
 shellContainer=DM-shell
 runContainer=DM-run
+autoloaderContainer=DM-autoloader
 configContainer=DM-config
 releaseBuildContainer=DM-release-build
-containers=("$shellContainer" "$configContainer" "$runContainer" "$releaseBuildContainer")
+containers=("$shellContainer" "$configContainer" "$runContainer" "$autoloaderContainer" "$releaseBuildContainer")
 
 imageName=dactyl-keyboard
 srcBind="$(pwd)/src:/app/src"
@@ -189,8 +190,9 @@ Usage:
   ./dactyl.sh 
   ./dactyl.sh [-h | --help | --uninstall]
   ./dactyl.sh image [--build | --inspect | --remove]
-  ./dactyl.sh (config|run|releaseBuild) [--build | --inspect | --start | --stop | --remove]
+  ./dactyl.sh (config|run|autoloader|releaseBuild) [--build | --inspect | --start | --stop | --remove]
   ./dactyl.sh shell [--build | --inspect | --session | --start | --stop | --remove]
+  ./dactyl.sh autoloader
 
 Options:
   positional    Target the image or a particular container (shell | config | run | releaseBuild)
@@ -202,6 +204,7 @@ Options:
   --stop        Stop the target container.
   --remove      Remove the target container.
   --session     Start a shell session in the shell container.
+  --autoloader  Start autoloader script
 _end_of_text
 exit
 }
@@ -213,6 +216,10 @@ function processArgs() {
       key="$1"
 
       case $key in
+        --autoloader)
+        handleStartStopAutoloader
+        exit 1
+        ;;
         --build|--remove|--inspect|--session|--start|--stop)
           if [[ $flags ]]; then
             flags+=" $key"
@@ -232,7 +239,7 @@ function processArgs() {
             exitUnexpectedPositionalArgs $key
             exit 1
           # the totality of accepted positional arguments
-          elif [[ "$key" =~ ^(image|shell|config|run|releaseBuild)$ ]]; then
+          elif [[ "$key" =~ ^(image|shell|config|run|releaseBuild|autoloader)$ ]]; then
             positional="$key"
             if [[ ! $key = image ]]; then
               key+="Container"
@@ -365,7 +372,6 @@ function containerIsRunning() {
   if ! containerExists "$container"; then
     return 1
   fi
-
   docker container inspect $container | grep '"Status": "running",' &> /dev/null
 }
 
@@ -388,6 +394,9 @@ function buildContainer() {
   case $container in
     $shellContainer)
       docker run --name $shellContainer -d -it -v "$srcBind" -v "$thingsBind" $imageName
+      ;;
+    $autoloaderContainer)
+      buildContainerAndExecutePythonScript autoloader.py
       ;;
     $runContainer)
       buildContainerAndExecutePythonScript dactyl_manuform.py
@@ -493,6 +502,21 @@ function handleBuildContainer() {
   promptIfShell
 }
 
+function handleStartStopAutoloader() {
+  container=$autoloaderContainer
+  if ! containerExists; then
+    buildContainer
+    exit 1
+  fi
+  if ! containerIsRunning; then
+    inform "Starting docker container: $container"
+    startContainer
+  else
+    inform "Stopping docker container: $container"
+    stopContainer
+  fi
+}
+
 function handleContainerMenu() {
   local build="Rebuild $container Container"
   local start="Start $container Container"
@@ -506,11 +530,10 @@ function handleContainerMenu() {
   if ! containerExists; then
     build="Build and run $container Container"
     options=("$build" "$main" "$end")
-  elif containerIsRunning; then
+  elif containerIsRunning && ! isShell; then
+    options=("$inspect" "$build" "$stop" "$remove" "$main" "$end")
+  elif containerIsRunning && isShell; then
     options=("$session" "$inspect" "$build" "$stop" "$remove" "$main" "$end")
-    if ! isShell; then
-      unset options[0]
-    fi
   else
     options=("$inspect" "$build" "$start" "$remove" "$main" "$end")
   fi
@@ -595,6 +618,7 @@ function handleMainMenu() {
 
   local imageOpt="Manage Docker Image"
   local shellOpt="$shellContainer Container"
+  local autoloaderOpt="$autoloaderContainer Container"
   local configOpt="$configContainer Container"
   local releaseOpt="$releaseBuildContainer Container"
   local runOpt="$runContainer Container"
@@ -602,7 +626,7 @@ function handleMainMenu() {
   local help="Show Help"
   local end="Exit"
 
-  options=("$imageOpt" "$shellOpt" "$configOpt" "$runOpt" "$releaseOpt" "$help" "$uninstallOpt" "$end")
+  options=("$imageOpt" "$shellOpt" "$autoloaderOpt" "$configOpt" "$runOpt" "$releaseOpt" "$help" "$uninstallOpt" "$end")
   
   # execute in subshell so exit code doesn't exit the script
   (menu "${options[@]}") && true
@@ -612,7 +636,7 @@ function handleMainMenu() {
     $help) showHelpAndExit;;
     $imageOpt) handleImageMenu;;
     $uninstallOpt) handleUninstall;;
-    $shellOpt|$configOpt|$runOpt|$releaseOpt)
+    $shellOpt|$autoloaderOpt|$configOpt|$runOpt|$releaseOpt)
       # remove " Container" and set as currentn container
       container=$(echo "${result/ Container/}")
       handleContainerMenu
@@ -639,7 +663,7 @@ promptBuildImageIfNotExists
 if [[ "$positional" ]]; then
   case $positional in
     image) handleImageCLI;;
-    shell|config|run|releaseBuild) handleContainerCLI;;
+    shell|config|run|autoloader|releaseBuild) handleContainerCLI;;
     *) exitUnexpectedPositionalArgs;;
   esac
 else
