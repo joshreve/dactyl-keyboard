@@ -8,7 +8,7 @@ base = shape_config
 
 config_options = [
     {
-        'name': '{}', 'vars': ['ball_side'], # set ball side to both, other half can come from other renders
+        'name': '{}', 'vars': ['ball_side'],  # set ball side to both, other half can come from other renders
         'vals': ['both'],
         'val_names': ['']
     },
@@ -56,12 +56,11 @@ def create_config(config_options):
                 temp_opt = copy.deepcopy(opt)
                 new_config = copy.deepcopy(config)
                 if len(temp_opt['vars']) == 1:
-                    vals=[vals]
+                    vals = [vals]
                     if 'val_names' in temp_opt:
                         temp_opt['val_names'][i_vals] = [temp_opt['val_names'][i_vals]]
                 for i_val, val in enumerate(vals):
                     new_config[opt['vars'][i_val]] = val
-
 
                 if 'val_names' in temp_opt:
                     n_input = temp_opt['val_names'][i_vals]
@@ -78,19 +77,18 @@ def create_config(config_options):
     return configurations
 
 
-
 def build_release(base, configurations, engines=('solid', 'cadquery')):
     init = True
     for config in configurations:
         shape_config = copy.deepcopy(base)
         for item in config:
             shape_config[item] = config[item]
-    
+
         for engine in engines:
             shape_config['ENGINE'] = engine
             with open('run_config.json', mode='w') as fid:
                 json.dump(shape_config, fid, indent=4)
-    
+
             if init:
                 import dactyl_manuform as dactyl_manuform
                 dactyl_manuform.run()
@@ -98,6 +96,7 @@ def build_release(base, configurations, engines=('solid', 'cadquery')):
             else:
                 importlib.reload(dactyl_manuform)
                 dactyl_manuform.run()
+
 
 if __name__ == '__main__':
     configurations = create_config(config_options)

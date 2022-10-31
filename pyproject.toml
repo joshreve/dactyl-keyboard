@@ -1,0 +1,43 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "setuptools-scm",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dactyl_keyboard"
+authors = [
+    { name="Matt Adereth" },
+    { name="Tom Short" },
+    { name="Josh Reve" },
+]
+description = "A package to generate Dactyl(Manuform) keyboards"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "AGPLv3" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+    "importlib-resources; python_version<'3.9'",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+cadquery = ["cadquery==2.2.0b2", "cadquery-ocp==7.6.3a0", "scipy"]
+solid = ["solidpython"]
+
+[project.urls]
+"Homepage" = "https://github.com/joshreve/dactyl-keyboard"
+"Bug Tracker" = "https://github.com/joshreve/dactyl-keyboard/issues"
+
+[project.scripts]
+"dactyl-keyboard" = "dactyl_keyboard.dactyl_manuform:run"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["dactyl_keyboard"]

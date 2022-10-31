@@ -1,12 +1,10 @@
-import sys
-import getopt
-import os
+import argparse
 import json
+import logging
+import math
+import pathlib
+from typing import Optional
 
-
-pi = 3.14159
-d2r = pi / 180
-r2d = 180 / pi
 
 shape_config = {
 
@@ -21,24 +19,25 @@ shape_config = {
     'save_dir': '.',
     'config_name':  "DM",
 
-    'show_caps': False,
-    'show_pcbs': False, #only runs if caps are shown, easist place to initially inject geometry
+    'show_caps': 'MX',
+    'show_pcbs': False,  # only runs if caps are shown, easist place to initially inject geometry
 
-    'nrows':  5, #5,  # key rows
-    'ncols':  6, #6,  # key columns
+    'nrows':  5,  # 5,  # key rows
+    'ncols':  6,  # 6,  # key columns
 
-    'alpha':  pi / 12.0,  # curvature of the columns
-    'beta':  pi / 36.0,  # curvature of the rows
+    'alpha':  math.pi / 12.0,  # curvature of the columns
+    'beta':  math.pi / 36.0,  # curvature of the rows
     'centercol':  3,  # controls left_right tilt / tenting (higher number is more tenting)
-    'centerrow_offset': 3,  # rows from max, controls front_back tilt
-    'tenting_angle':  pi / 12.0,  # or, change this for more precise tenting control
+    'centerrow_offset':  3,  # rows from max, controls front_back tilt
+    'tenting_angle':  math.pi / 12.0,  # or, change this for more precise tenting control
 
     # symmetry states if it is a symmetric or asymmetric bui.  If asymmetric it doubles the generation time.
     'symmetry':  "symmetric",  # "asymmetric" or "symmetric"
 
     'column_style_gt5':  "orthographic",
     'column_style':  "standard",  # options include :standard, :orthographic, and :fixed
-    'reduced_outer_keys': True,
+    'reduced_inner_cols': 2,  # currently supports 0 or 2 due to thumb cluster attachment
+    'reduced_outer_cols': 0,
 
 
     'thumb_offsets':  [6, -3, 7],
@@ -61,11 +60,13 @@ shape_config = {
     ##############################
 
     # 'DEFAULT' 6-key, 'MINI' 5-key, 'CARBONFET' 6-key, 'MINIDOX' 3-key, 'TRACKBALL_ORBYL', 'TRACKBALL_CJ'
-    'thumb_style': 'CARBONFET',
-    'default_1U_cluster': True, # only used with default, makes top right thumb cluster key 1U
+    'thumb_style': 'DEFAULT',
+    'default_1U_cluster': True,  # only used with default, makes top right thumb cluster key 1U
     # Thumb key size.  May need slight oversizing, check w/ caps.  Additional spacing will be automatically added for larger keys.
     'minidox_Usize': 1.6,
     # Thumb plate rotations, anything other than 90 degree increments WILL NOT WORK.
+
+    'mini_index_key': True,
 
     # Screw locations and extra screw locations for separable thumb, all from thumb origin
     # Pulled out of hardcoding as drastic changes to the geometry may require fixes to the screw mounts.
@@ -91,21 +92,21 @@ shape_config = {
     'thumb_plate_bl_rotation': 0.0,  # Bottom right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
     ##############################
     # EXPERIMENTAL
-    'separable_thumb': False,  #creates a separable thumb section with additional screws to hold it down.  Only attached at base.
+    'separable_thumb': False,  # creates a separable thumb section with additional screws to hold it down.  Only attached at base.
     ##############################
 
     ###################################
     ## Trackball in Wall             ##
     ###################################
     'trackball_in_wall': False,  # Separate trackball option, placing it in the OLED area
-    'tbiw_ball_center_row': 0,  # up from cornerrow instead of down from top
-    'tbiw_translational_offset': (2.0, -12.0, -10.0),
-    'tbiw_rotation_offset': (30.0, -10.0, 0.0),
+    'tbiw_ball_center_row': 0.2,  # up from cornerrow instead of down from top
+    'tbiw_translational_offset': (0.0, 0.0, 0.0),
+    'tbiw_rotation_offset': (0.0, 0.0, 0.0),
     'tbiw_left_wall_x_offset_override': 50.0,
     'tbiw_left_wall_z_offset_override': 0.0,
-    'tbiw_left_wall_lower_x_offset': 15.0,
-    'tbiw_left_wall_lower_y_offset': -15.0,
-    'tbiw_left_wall_lower_z_offset': -25.0,
+    'tbiw_left_wall_lower_x_offset': 0.0,
+    'tbiw_left_wall_lower_y_offset': 0.0,
+    'tbiw_left_wall_lower_z_offset': 0.0,
 
     'tbiw_oled_center_row': .75,  # not none, offsets are from this position
     'tbiw_oled_translation_offset': (-3.5, 0, 1.5),  # Z offset tweaks are expected depending on curvature and OLED mount choice.
@@ -114,20 +115,20 @@ shape_config = {
     ##########################################################################
     ## Finger Trackball in Wall EXPERIMENTAL WIP!!!!                        ##
     ##########################################################################
-    # 'finger_trackball_in_wall': False,  # Separate trackball option, placing it in the OLED area
-    # 'tbiw_ball_center_column': 0.2,  # up from cornerrow instead of down from top
-    # 'tbiw_translational_offset': (0.0, 0.0, 0.0),
-    # 'tbiw_rotation_offset': (0.0, 0.0, 0.0),
-    # 'tbiw_top_wall_y_offset_override': 50.0,
-    # 'tbiw_top_wall_z_offset_override': 0.0,
-    # 'tbiw_top_wall_extension_cols': 4,
+    'finger_trackball_in_wall': False,  # Separate trackball option, placing it in the OLED area
+    'tbiw_ball_center_column': 0.2,  # up from cornerrow instead of down from top
+    'tbiw_translational_offset': (0.0, 0.0, 0.0),
+    'tbiw_rotation_offset': (0.0, 0.0, 0.0),
+    'tbiw_top_wall_y_offset_override': 50.0,
+    'tbiw_top_wall_z_offset_override': 0.0,
+    'tbiw_top_wall_extension_cols': 4,
 
 
 
     ###########################################
     ## Trackball JS / ORBYL Thumb Cluster    ##
     ##########################################
-    'other_thumb': 'DEFAULT', # cluster used for second thumb except if ball_side == 'both'
+    'other_thumb': 'DEFAULT',  # cluster used for second thumb except if ball_side == 'both'
     'tbjs_key_diameter': 70,
     'tbjs_Uwidth': 1.2,  # size for inner key near trackball
     'tbjs_Uheight': 1.2,  # size for inner key near trackball
@@ -168,7 +169,7 @@ shape_config = {
     'trackball_modular_ring_height': 10.0,  # height mount ring down from ball height. Covers gaps on elevated ball.
     'trackball_modular_clearance': 0.5,  # height of ball from ring, used to create identical position to fixed.
 
-    'ball_side': 'both', #'left', 'right', or 'both'
+    'ball_side': 'both',  # 'left', 'right', or 'both'
     'ball_diameter': 34.0,
     'ball_wall_thickness': 3,  # should not be changed unless the import models are changed.
     'ball_gap': 1.0,
@@ -179,8 +180,8 @@ shape_config = {
     # Removed trackball_rotation, ball_z_offset. and trackball_sensor_rotation and added more flexibility.
     'tb_socket_translation_offset': (0, 0, 2.0),  # applied to the socket and sensor, large values will cause web/wall issues.
     'tb_socket_rotation_offset':    (0, 0, 0),  # applied to the socket and sensor, large values will cause web/wall issues.
-    'tb_sensor_translation_offset': (0, 0, 0),  #deviation from socket offsets, for fixing generated geometry issues
-    'tb_sensor_rotation_offset':    (0, 0, 0),  #deviation from socket offsets, for changing the sensor roll orientation
+    'tb_sensor_translation_offset': (0, 0, 0),  # deviation from socket offsets, for fixing generated geometry issues
+    'tb_sensor_rotation_offset':    (0, 0, 0),  # deviation from socket offsets, for changing the sensor roll orientation
 
     ##############################
     # EXPERIMENTAL PARAMETERS
@@ -188,7 +189,10 @@ shape_config = {
     'pinky_1_5U': False,  # LEAVE AS FALSE, CURRENTLY BROKEN
     'first_1_5U_row': 0,
     'last_1_5U_row': 5,
+
+    'skeletal': False,
     ##############################
+
 
 
     'wall_z_offset':  15,  # length of the first downward_sloping part of the wall
@@ -205,15 +209,15 @@ shape_config = {
 
     'wall_base_back_thickness':  4.5,  # wall thickness at the lower stage in the specifically in back for interface.
 
-    ## Settings for column_style == :fixed
-    ## The defaults roughly match Maltron settings
-    ##   http://patentimages.storage.googleapis.com/EP0219944A2/imgf0002.png
-    ## fixed_z overrides the z portion of the column ofsets above.
-    ## NOTE: THIS DOESN'T WORK QUITE LIKE I'D HOPED.
-    'fixed_angles':  [d2r * 10, d2r * 10, 0, 0, 0, d2r * -15, d2r * -15],
+    # Settings for column_style == :fixed
+    # The defaults roughly match Maltron settings
+    # http://patentimages.storage.googleapis.com/EP0219944A2/imgf0002.png
+    # fixed_z overrides the z portion of the column ofsets above.
+    # NOTE: THIS DOESN'T WORK QUITE LIKE I'D HOPED.
+    'fixed_angles':  [math.radians(10), math.radians(10), 0, 0, 0, math.radians(-15), math.radians(-15)],
     'fixed_x':  [-41.5, -22.5, 0, 20.3, 41.4, 65.5, 89.6],  # relative to the middle finger
     'fixed_z':  [12.1, 8.3, 0, 5, 10.7, 14.5, 17.5],
-    'fixed_tenting':  d2r * 0,
+    'fixed_tenting':  0,
 
     #################
     ## Switch Hole ##
@@ -240,7 +244,7 @@ shape_config = {
 
     'undercut_keyswitch_height':  14.0,
     'undercut_keyswitch_width':  14.0,
-    'notch_width': 5.0, # If using notch, it is identical to undecut, but only locally by the switch clip
+    'notch_width': 6.0,  # If using notch, it is identical to undecut, but only locally by the switch clip
 
     'sa_profile_key_height':  12.7,
     'sa_length': 18.5,
@@ -249,7 +253,7 @@ shape_config = {
 
     'plate_rim': 1.5 + 0.5,
     # Undercut style dimensions
-    'clip_thickness':  1.3,
+    'clip_thickness':  1.1,
     'clip_undercut':  1.0,
     'undercut_transition':  .2,  # NOT FUNCTIONAL WITH OPENSCAD, ONLY WORKS WITH CADQUERY
 
@@ -258,7 +262,7 @@ shape_config = {
     'plate_offset':  0.0,
 
     ##########################
-    ## OLED Mount Location
+    # OLED Mount Location
     ##########################
     # Initial pass will be manual placement.  Can be used to create other mounts as well.
     # Mount type options:
@@ -267,21 +271,21 @@ shape_config = {
     # 'SLIDING' = Features to slide the OLED in place and use a pin or block to secure from underneath.
     # 'CLIP' = Features to set the OLED in a frame a snap a bezel down to hold it in place.
 
-    'oled_mount_type':  'NONE',
-    'oled_center_row': 1.25, # if not None, this will override the oled_mount_location_xyz and oled_mount_rotation_xyz settings
-    'oled_translation_offset': (0, 0, 4), # Z offset tweaks are expected depending on curvature and OLED mount choice.
+    'oled_mount_type':  'CLIP',
+    'oled_center_row': 1.25,  # if not None, this will override the oled_mount_location_xyz and oled_mount_rotation_xyz settings
+    'oled_translation_offset': (0, 0, 4),  # Z offset tweaks are expected depending on curvature and OLED mount choice.
     'oled_rotation_offset': (0, 0, 0),
 
     'oled_configurations': {
-        'UNDERCUT':{
+        'UNDERCUT': {
             # Common parameters
             'oled_mount_width': 15.0,
             'oled_mount_height': 35.0,
             'oled_mount_rim': 3.0,
             'oled_mount_depth': 6.0,
             'oled_mount_cut_depth': 20.0,
-            'oled_mount_location_xyz': (-80.0, 20.0, 45.0), # will be overwritten if oled_center_row is not None
-            'oled_mount_rotation_xyz': (13.0, 0.0, -6.0), # will be overwritten if oled_center_row is not None
+            'oled_mount_location_xyz': (-80.0, 20.0, 45.0),  # will be overwritten if oled_center_row is not None
+            'oled_mount_rotation_xyz': (13.0, 0.0, -6.0),  # will be overwritten if oled_center_row is not None
             'oled_left_wall_x_offset_override': 28.0,
             'oled_left_wall_z_offset_override': 0.0,
             'oled_left_wall_lower_y_offset': 12.0,
@@ -298,8 +302,8 @@ shape_config = {
             'oled_mount_rim': 2.5,
             'oled_mount_depth': 8.0,
             'oled_mount_cut_depth': 20.0,
-            'oled_mount_location_xyz': (-78.0, 10.0, 41.0), # will be overwritten if oled_center_row is not None
-            'oled_mount_rotation_xyz': (6.0, 0.0, -3.0), # will be overwritten if oled_center_row is not None
+            'oled_mount_location_xyz': (-78.0, 10.0, 41.0),  # will be overwritten if oled_center_row is not None
+            'oled_mount_rotation_xyz': (6.0, 0.0, -3.0),  # will be overwritten if oled_center_row is not None
             'oled_left_wall_x_offset_override': 24.0,
             'oled_left_wall_z_offset_override': 0.0,
             'oled_left_wall_lower_y_offset': 12.0,
@@ -320,8 +324,8 @@ shape_config = {
             'oled_mount_rim': 2.0,
             'oled_mount_depth': 7.0,
             'oled_mount_cut_depth': 20.0,
-            'oled_mount_location_xyz': (-78.0, 20.0, 42.0), # will be overwritten if oled_center_row is not None
-            'oled_mount_rotation_xyz': (12.0, 0.0, -6.0), # will be overwritten if oled_center_row is not None
+            'oled_mount_location_xyz': (-78.0, 20.0, 42.0),  # will be overwritten if oled_center_row is not None
+            'oled_mount_rotation_xyz': (12.0, 0.0, -6.0),  # will be overwritten if oled_center_row is not None
             'oled_left_wall_x_offset_override': 24.0,
             'oled_left_wall_z_offset_override': 0.0,
             'oled_left_wall_lower_y_offset': 12.0,
@@ -347,7 +351,7 @@ shape_config = {
         }
     },
 
-    'screws_offset': 'INSIDE', # 'OUTSIDE', 'INSIDE', 'ORIGINAL'
+    'screws_offset': 'INSIDE',  # 'OUTSIDE', 'INSIDE', 'ORIGINAL'
 
     'screw_insert_height': 3.8,
 
@@ -382,7 +386,7 @@ shape_config = {
     'external_holder_height':  12.5,
     'external_holder_width':  28.75,
     'external_holder_xoffset': -5.0,
-    'external_holder_yoffset': -4.5, #Tweak this value to get the right undercut for the tray engagement.
+    'external_holder_yoffset': -4.5,  # Tweak this value to get the right undercut for the tray engagement.
 
     # Offset is from the top inner corner of the top inner key.
 
@@ -402,18 +406,18 @@ shape_config = {
     "trrs_offset": [0, 0, 1.5],
 
     "pcb_screw_hole_size": [.5, 10],
-    "pcb_screw_x_offsets": [- 5.5, 7.75, 22], # for the screw positions off of reference
+    "pcb_screw_x_offsets": [- 5.5, 7.75, 22],  # for the screw positions off of reference
     "pcb_screw_y_offset": -2,
 
 
     ###################################
-    ## Bottom Plate Dimensions
+    # Bottom Plate Dimensions
     ###################################
     # COMMON DIMENSION
     'screw_hole_diameter': 3,
     # USED FOR CADQUERY ONLY
-    'base_thickness': 3.0, # thickness in the middle of the plate
-    'base_offset': 3.0, # Both start flat/flush on the bottom.  This offsets the base up (if positive)
+    'base_thickness': 3.0,  # thickness in the middle of the plate
+    'base_offset': 3.0,  # Both start flat/flush on the bottom.  This offsets the base up (if positive)
     'base_rim_thickness': 5.0,  # thickness on the outer frame with screws
     'screw_cbore_diameter': 6.0,
     'screw_cbore_depth': 2.5,
@@ -421,7 +425,7 @@ shape_config = {
     # Offset is from the top inner corner of the top inner key.
 
     ###################################
-    ## HOLES ON PLATE FOR PCB MOUNT
+    # HOLES ON PLATE FOR PCB MOUNT
     ###################################
     'plate_holes':  True,
     'plate_holes_xy_offset': (0.0, 0.0),
@@ -431,14 +435,14 @@ shape_config = {
     'plate_holes_depth': 20.0,
 
     ###################################
-    ## EXPERIMENTAL
+    # EXPERIMENTAL
     'plate_pcb_clear': False,
     'plate_pcb_size': (18.5, 18.5, 5),
-    'plate_pcb_offset': (0, 0, 0),# this is off of the back of the plate size.
+    'plate_pcb_offset': (0, 0, 0),  # this is off of the back of the plate size.
     ###################################
 
     ###################################
-    ## SHOW PCB FOR FIT CHECK
+    # SHOW PCB FOR FIT CHECK
     ###################################
     'pcb_width': 18.0,
     'pcb_height': 18.0,
@@ -448,7 +452,7 @@ shape_config = {
     'pcb_hole_pattern_height': 14.3,
 
     ###################################
-    ## COLUMN OFFSETS
+    # COLUMN OFFSETS
     ####################################
 
     'column_offsets':  [
@@ -456,48 +460,32 @@ shape_config = {
         [0, 0, 0],
         [0, 2.82, -4.5],
         [0, 0, 0],
-        [0, -6, 5],# REDUCED STAGGER
-        [0, -6, 5],# REDUCED STAGGER
-        [0, -6, 5],# NOT USED IN MOST FORMATS (7th column)
+        [0, -6, 5],  # REDUCED STAGGER
+        [0, -6, 5],  # REDUCED STAGGER
+        [0, -6, 5],  # NOT USED IN MOST FORMATS (7th column)
     ],
 
 }
 
-    ####################################
-    ## END CONFIGURATION SECTION
-    ####################################
 
-def save_config():
-    # Check to see if the user has specified an alternate config
-    opts, args = getopt.getopt(sys.argv[1:], "", ["config=", "update="])
-    got_opts = False
-    for opt, arg in opts:
-        if opt in ('--update'):
-            with open(os.path.join(r"..", "configs", arg + '.json'), mode='r') as fid:
-                data = json.load(fid)
-                shape_config.update(data)
-            got_opts = True
+class GenerateConfigAction(argparse.Action):
+    """
+    Generate a file with default configuration settings.
+    """
 
-    for opt, arg in opts:
-        if opt in ('--config'):
-            # If a config file was specified, set the config_name and save_dir
-            shape_config['save_dir'] = arg
-            shape_config['config_name'] = arg
-            got_opts = True
+    def __init__(self, option_strings, dest: str, **kwargs):
+        kwargs.update({
+            'nargs': "?",
+            'const': pathlib.Path("default.json"),
+            'default': argparse.SUPPRESS,
+            'type': pathlib.Path,
+            'required': False,
+            'help': "Generate the default settings configuration file, and exit."
+        })
+        super().__init__(option_strings, dest, **kwargs)
 
-    # Write the config to ./configs/<config_name>.json
-    if got_opts:
-        with open(os.path.join(r"..", "configs", shape_config['config_name'] + '.json'), mode='w') as fid:
-            json.dump(shape_config, fid, indent=4)
-
-    else:
-        with open(os.path.join(r".", 'run_config.json'), mode='w') as fid:
-            json.dump(shape_config, fid, indent=4)
-
-
-if __name__ == '__main__':
-    save_config()
-
-    ## HERE FOR QUICK TESTING, SHOULD BE COMMENTED ON COMMIT
-    from dactyl_manuform import *
-    run()
+    def __call__(self, _parser: argparse.ArgumentParser, _namespace: argparse.Namespace, values: pathlib.Path, _option_string: Optional[str] = None):
+        with values.open(mode="wt", encoding="utf-8") as opened_file:
+            logging.info("Generating default configuration to %s", values)
+            json.dump(shape_config, opened_file, indent=4)
+        exit()

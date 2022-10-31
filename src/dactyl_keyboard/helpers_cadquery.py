@@ -1,13 +1,14 @@
+import logging
+import pathlib
+import sys
+if sys.version_info[:2] > (3, 9):
+    import importlib.resources as resources
+else:
+    import importlib_resources as resources
+
 import cadquery as cq
 from scipy.spatial import ConvexHull as sphull
 import numpy as np
-
-
-debug_trace = False
-
-def debugprint(info):
-    if debug_trace:
-        print(info)
 
 
 def box(width, height, depth):
@@ -46,12 +47,12 @@ def translate(shape, vector):
 
 
 def mirror(shape, plane=None):
-    debugprint('mirror()')
+    logging.debug("mirror()")
     return shape.mirror(mirrorPlane=plane)
 
 
 def union(shapes):
-    debugprint('union()')
+    logging.debug("union()")
     shape = None
     for item in shapes:
         if item is not None:
@@ -63,7 +64,7 @@ def union(shapes):
 
 
 def add(shapes):
-    debugprint('union()')
+    logging.debug("union()")
     shape = None
     for item in shapes:
         if item is not None:
@@ -75,7 +76,7 @@ def add(shapes):
 
 
 def difference(shape, shapes):
-    debugprint('difference()')
+    logging.debug("difference()")
     for item in shapes:
         if item is not None:
             shape = shape.cut(item)
@@ -88,8 +89,9 @@ def intersect(shape1, shape2):
     else:
         return shape1
 
+
 def face_from_points(points):
-    # debugprint('face_from_points()')
+    # logging.debug("face_from_points()")
     edges = []
     num_pnts = len(points)
     for i in range(len(points)):
@@ -108,7 +110,6 @@ def face_from_points(points):
 
 
 def hull_from_points(points):
-    # debugprint('hull_from_points()')
     hull_calc = sphull(points)
     n_faces = len(hull_calc.simplices)
 
@@ -126,7 +127,6 @@ def hull_from_points(points):
 
 
 def hull_from_shapes(shapes, points=None):
-    # debugprint('hull_from_shapes()')
     vertices = []
     for shape in shapes:
         verts = shape.vertices()
@@ -141,7 +141,6 @@ def hull_from_shapes(shapes, points=None):
 
 
 def tess_hull(shapes, sl_tol=.5, sl_angTol=1):
-    # debugprint('hull_from_shapes()')
     vertices = []
     solids = []
     for wp in shapes:
@@ -158,7 +157,7 @@ def tess_hull(shapes, sl_tol=.5, sl_angTol=1):
 
 
 def triangle_hulls(shapes):
-    debugprint('triangle_hulls()')
+    logging.debug("triangle_hulls()")
     hulls = [cq.Workplane('XY')]
     for i in range(len(shapes) - 2):
         hulls.append(hull_from_shapes(shapes[i: (i + 3)]))
@@ -166,11 +165,8 @@ def triangle_hulls(shapes):
     return union(hulls)
 
 
-
-
-
 def bottom_hull(p, height=0.001):
-    debugprint("bottom_hull()")
+    logging.debug("bottom_hull()")
     shape = None
     for item in p:
         vertices = []
@@ -220,20 +216,24 @@ def extrude_poly(outer_poly, inner_polys=None, height=1):  # vector=(0,0,1)):
         cq.Solid.extrudeLinear(outerWire=outer_wires, innerWires=inner_wires, vecNormal=cq.Vector(0, 0, height)))
 
 
-def import_file(fname, convexity=None):
-    print("IMPORTING FROM {}".format(fname))
-    return cq.Workplane('XY').add(cq.importers.importShape(
-        cq.exporters.ExportTypes.STEP,
-        fname + ".step"))
+def import_resource(parts_path: resources.abc.Traversable, fname: str, convexity=None):
+    logging.info("IMPORTING FROM %s", fname)
+    with resources.as_file(parts_path.joinpath(fname + ".step")) as extracted:
+        return cq.Workplane('XY').add(cq.importers.importShape(cq.exporters.ExportTypes.STEP, str(extracted)))
+
+
+def import_file(fname: pathlib.Path, convexity=None):
+    logging.info("IMPORTING FROM %s", fname)
+    return cq.Workplane('XY').add(cq.importers.importShape(cq.exporters.ExportTypes.STEP, str(fname)))
 
 
 def export_file(shape, fname):
-    print("EXPORTING TO {}".format(fname))
+    logging.info("EXPORTING TO %s", fname)
     cq.exporters.export(w=shape, fname=fname + ".step",
                         exportType='STEP')
 
 
 def export_dxf(shape, fname):
-    print("EXPORTING TO {}".format(fname))
+    logging.info("EXPORTING TO %s", fname)
     cq.exporters.export(w=shape, fname=fname + ".dxf",
                         exportType='DXF')
