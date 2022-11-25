@@ -1,11 +1,9 @@
 import json
 import os
-import math
 import numpy as np
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 import clusters.trackball_cluster_abc as ca
-from dactyl_manuform import rad2deg, pi
 from typing import Any, Sequence
 
 def debugprint(data):
@@ -69,7 +67,7 @@ class TrackballCJCluster(ca.TrackballClusterBase):
         i = (i + 1) % 8
 
         r = radius
-        m = radius * math.tan(math.pi / 8)
+        m = radius * np.tan(np.pi / 8)
 
         points_x = [m, r, r, m, -m, -r, -r, -m]
         points_y = [r, m, -m, -r, -r, -m, m, r]

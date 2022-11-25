@@ -4,7 +4,6 @@
 # import copy
 # import importlib
 from helpers import helpers_abc
-from math import pi
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 import os.path as path
@@ -90,13 +89,6 @@ from typing import Any, Sequence, Tuple, Optional
 # ]
 
 debug_trace=False
-
-def deg2rad(degrees: float) -> float:
-    return degrees * pi / 180
-
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / pi
 
 
 def usize_dimension(Usize=1.5):

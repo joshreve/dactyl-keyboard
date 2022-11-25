@@ -1,11 +1,9 @@
 from clusters.default import DefaultCluster
 import os
 import json
-import numpy as np
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 import clusters.cluster_abc as ca
-from dactyl_manuform import rad2deg, pi
 from typing import Any, Sequence
 
 def debugprint(data):

@@ -1,6 +1,5 @@
 import json
 from os import path
-import numpy as np
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 from typing import Any, Sequence, Tuple, Optional
@@ -9,9 +8,6 @@ import oled.oled_abc as oa
 def debugprint(data):
     pass
     # print
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / pi
 
 @dataclass_json
 @dataclass

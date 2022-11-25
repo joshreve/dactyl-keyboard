@@ -13,11 +13,6 @@ def debugprint(data):
     pass
     # print
 
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / 3.14159
-
-
 @dataclass_json
 @dataclass
 class TBIWParameters:
@@ -100,7 +95,7 @@ class Trackball_in_wall:
 
         angle_x = np.arctan2(base_pt1[2] - base_pt2[2], base_pt1[1] - base_pt2[1])
         angle_z = np.arctan2(base_pt1[0] - base_pt2[0], base_pt1[1] - base_pt2[1])
-        tbiw_mount_rotation_xyz = (rad2deg(angle_x), 0, rad2deg(angle_z)) + np.array(self.p.tbiw_rotation_offset)
+        tbiw_mount_rotation_xyz = np.rad2deg((angle_x, 0, angle_z)) + np.array(self.p.tbiw_rotation_offset)
 
         return tbiw_mount_location_xyz, tbiw_mount_rotation_xyz
 

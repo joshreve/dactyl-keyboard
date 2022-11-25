@@ -1,7 +1,5 @@
 # from dactyl_manuform import *
 from clusters.default import DefaultCluster
-import numpy as np
-from numpy import pi
 import os.path as path
 import getopt, sys
 import json
@@ -11,13 +9,6 @@ import shutil
 
 debug_exports = False
 debug_trace = False
-
-def deg2rad(degrees: float) -> float:
-    return degrees * pi / 180
-
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / pi
 
 
 def debugprint(info):

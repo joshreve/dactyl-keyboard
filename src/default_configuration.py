@@ -1,3 +1,4 @@
+import numpy as np
 import sys
 import getopt
 import os
@@ -5,10 +6,6 @@ import json
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 from typing import Any, Sequence
-
-pi = 3.14159
-d2r = pi / 180
-r2d = 180 / pi
 
 from oled.oled_clip import OLEDClipParameters as OLEDClip
 from oled.oled_sliding import OLEDSlidingParameters as OLEDSliding
@@ -41,11 +38,11 @@ class ShapeConfiguration:
     nrows = 5  # 5,  # key rows
     ncols = 6  # 6,  # key columns
 
-    alpha: float = pi / 12.0  # curvature of the columns
-    beta: float = pi / 36.0  # curvature of the rows
+    alpha: float = np.pi / 12.0  # curvature of the columns
+    beta: float = np.pi / 36.0  # curvature of the rows
     centercol: int = 3  # controls left_right tilt / tenting (higher number is more tenting)
     centerrow_offset: int = 3  # rows from max, controls front_back tilt
-    tenting_angle: float = pi / 12.0  # or, change this for more precise tenting control
+    tenting_angle: float = np.pi / 12.0  # or, change this for more precise tenting control
 
     # symmetry states if it is a symmetric or asymmetric bui.  If asymmetric it doubles the generation time.
     symmetric: bool = True # "asymmetric" or "symmetric"
@@ -136,10 +133,10 @@ class ShapeConfiguration:
     ##   http://patentimages.storage.googleapis.com/EP0219944A2/imgf0002.png
     ## fixed_z overrides the z portion of the column ofsets above.
     ## NOTE: THIS DOESN'T WORK QUITE LIKE I'D HOPED.
-    fixed_angles: Sequence[float] = (d2r * 10, d2r * 10, 0, 0, 0, d2r * -15, d2r * -15)
+    fixed_angles: Sequence[float] = tuple(np.deg2rad((10, 10, 0, 0, 0, -15, -15)))
     fixed_x: Sequence[float] = (-41.5, -22.5, 0, 20.3, 41.4, 65.5, 89.6)  # relative to the middle finger
     fixed_z: Sequence[float] = (12.1, 8.3, 0, 5, 10.7, 14.5, 17.5)
-    fixed_tenting: float = d2r * 0
+    fixed_tenting: float = np.deg2rad(0)
 
     ###################################
     ## SCREWS SETUP                  ##

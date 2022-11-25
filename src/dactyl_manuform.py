@@ -1,5 +1,4 @@
 import numpy as np
-from numpy import pi
 import os.path as path
 import os
 import copy
@@ -40,15 +39,6 @@ debug_trace = False
 def debugprint(info):
     if debug_trace:
         print(info)
-
-
-
-def deg2rad(degrees: float) -> float:
-    return degrees * pi / 180
-
-
-def rad2deg(rad: float) -> float:
-    return rad * 180 / pi
 
 
 def usize_dimension(Usize=1.5):
@@ -310,11 +300,11 @@ class DactylBase:
 
     def x_rot(self, shape, angle):
         # debugprint('x_rot()')
-        return self.g.rotate(shape, [rad2deg(angle), 0, 0])
+        return self.g.rotate(shape, [np.rad2deg(angle), 0, 0])
 
     def y_rot(self, shape, angle):
         # debugprint('y_rot()')
-        return self.g.rotate(shape, [0, rad2deg(angle), 0])
+        return self.g.rotate(shape, [0, np.rad2deg(angle), 0])
 
     def key_place(self, shape, column, row):
         debugprint('key_place()')

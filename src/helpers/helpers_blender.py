@@ -1,10 +1,10 @@
+import numpy as np
 import bpy
 import bmesh
 import os
 import sys
 import time
 import mathutils
-from math import pi, radians, sin, cos
 from contextlib import contextmanager
 
 
@@ -34,9 +34,9 @@ def cone(r1, r2, height):
 
 
 def rotate(shape, angle):
-    bpy.ops.transform.rotate(value=-radians(angle[0]), orient_axis='X', center_override=(0.0, 0.0, 0.0))
-    bpy.ops.transform.rotate(value=-radians(angle[1]), orient_axis='Y', center_override=(0.0, 0.0, 0.0))
-    bpy.ops.transform.rotate(value=-radians(angle[2]), orient_axis='Z', center_override=(0.0, 0.0, 0.0))
+    bpy.ops.transform.rotate(value=-np.deg2rad(angle[0]), orient_axis='X', center_override=(0.0, 0.0, 0.0))
+    bpy.ops.transform.rotate(value=-np.deg2rad(angle[1]), orient_axis='Y', center_override=(0.0, 0.0, 0.0))
+    bpy.ops.transform.rotate(value=-np.deg2rad(angle[2]), orient_axis='Z', center_override=(0.0, 0.0, 0.0))
     return
 
 def translate(shape, vector):

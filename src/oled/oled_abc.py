@@ -11,8 +11,6 @@ def debugprint(data):
     pass
     # print
 
-def rad2deg(rad: float) -> float:
-    return rad * 180 / 3.14159
 
 @dataclass_json
 @dataclass
@@ -104,7 +102,7 @@ class OLEDBase(ABC):
             angle_x = np.arctan2(base_pt1[2] - base_pt2[2], base_pt1[1] - base_pt2[1])
             angle_z = np.arctan2(base_pt1[0] - base_pt2[0], base_pt1[1] - base_pt2[1])
 
-            self.op.mount_rotation_xyz = (rad2deg(angle_x), 0, -rad2deg(angle_z)) + np.array(
+            self.op.mount_rotation_xyz = np.rad2deg((angle_x, 0, -angle_z)) + np.array(
                 self.op.rotation_offset)
 
 
@@ -133,9 +131,9 @@ class OLEDBase(ABC):
             angle_z = np.arctan2(base_pt1[0] - base_pt2[0], base_pt1[1] - base_pt2[1])
 
             if self.op.vertical:
-                oled_mount_rotation_xyz = (rad2deg(angle_x), 0, -rad2deg(angle_z)) + np.array(self.op.rotation_offset)
+                oled_mount_rotation_xyz = np.rad2deg((angle_x, 0, -angle_z)) + np.array(self.op.rotation_offset)
             else:
-                oled_mount_rotation_xyz = (0, rad2deg(angle_x), -90) + np.array(self.op.rotation_offset)
+                oled_mount_rotation_xyz = (0, np.rad2deg(angle_x), -90) + np.array(self.op.rotation_offset)
 
             return oled_mount_location_xyz, oled_mount_rotation_xyz
 
