@@ -3,21 +3,6 @@ This is a fork of [Dactyl-Manuform](https://github.com/tshort/dactyl-keyboard) b
 
 While the code structure remains comparable to the original, Clojure and OpenSCAD have been replaced by Python and cadquery/OpenCASCADE.  The predecessors were exceptional contributions to the ergo keyboard community by the authors but used a rather esoteric programming language, Clojure, and a relatively inconsistent geometry engine, OpenSCAD.  My hope is that by converting the code the community will have an easier time modifying and evolving this design.  
 
-
-## Collaborations and Donations
-I decided to start accepting donations to help offset some of the prototyping costs and development time.  There are 2 ways to contribute to this project:
-
-### Purchase a kit or keyboard from https://www.ergohaven.xyz/
-I am also supported by [ergohaven](https://www.ergohaven.xyz/).  The Dactyl-Manuforms are generated from this repository.  After working with the owner on additions to support new features we decided to collaborate to evolve the designs they can offer and to support my work.  
-
-### Donate directly
-I opened Liberapay and Ko-fi accounts to accept donations.  It is obviously not necessary, but is appreciated.  If you do donate and have something specific you really want to see, please let me know. I want to be very open that I can't promise to complete all requests as there are many reasons like engine capabilities and generator construction that can make certain features unfeasible, but I will do my best to improve this repo for you and the ergo keyboard community.
-
-[![Donate using Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/joshreve/donate)
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K25ZIHR)
-
-
 ## Helpful Feedback
 At this point there has been tons of feedback form the community and I greatly appreciate it.  While I can only work on this in my free time, I do my best to respond to anyone who posts a comment or question.  Feedback on issues or just possible new features is always welcome.
 
