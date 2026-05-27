@@ -4,10 +4,27 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python>=3.6
-  - cadquery=2
+  - python>=3.8
+  - ipython
+  - ocp=7.7.0
+  - pyparsing>=2.1.9
+  - sphinx=5.0.1
+  - sphinx_rtd_theme
+  - black=19.10b0
+  - click=8.0.4
+  - mypy
+  - codecov
+  - pytest
+  - pytest-cov
+  - ezdxf
+  - typing_extensions
+  - nptyping=2.0.1
+  - nlopt
+  - path
+  - casadi
+  - multimethod >=1.7,<2.0
+  - cadquery>=2.1
   - pip
-  - numpy
-  - scipy
   - pip:
     - solidpython
+
