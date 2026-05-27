@@ -1,0 +1,17 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+	"name": "Miniconda (Python 3)",
+	"build": { 
+		"context": "..",
+		"dockerfile": "../docker/Dockerfile",
+	},
+
+	"settings": { 
+		"python.defaultInterpreterPath": "/opt/conda/envs/myenv/bin/python",
+	},
+
+	"extensions": [
+		"ms-python.python",
+		"ms-python.vscode-pylance"
+	],
+}
