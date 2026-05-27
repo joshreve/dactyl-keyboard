@@ -5,9 +5,10 @@ channels:
   - defaults
 dependencies:
   - python>=3.6
-  - cadquery=2
+  - cadquery=2.1
   - pip
   - numpy
   - scipy
+  - nptyping=1.4.4
   - pip:
     - solidpython
