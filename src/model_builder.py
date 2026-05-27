@@ -24,7 +24,7 @@ config_options = [
     },
     {
         'name': '{}TMB', 'vars': ['thumb_style'],
-        'vals': ['DEFAULT', 'MINIDOX', 'TRACKBALL_ORBISSYL'],
+        'vals': ['DEFAULT', 'MINIDOX', 'TRACKBALL_ORBYL'],
         'val_names': ['DEF', 'MDOX', 'ORBY']
         # 'vals': ['DEFAULT', 'MINI', 'CARBONFET', 'MINIDOX'],
         # 'val_names': ['DEF', 'MINI', 'CF', 'MDOX']
