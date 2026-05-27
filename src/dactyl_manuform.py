@@ -3833,7 +3833,7 @@ def screw_insert(column, row, bottom_radius, top_radius, height, side='right'):
 
     if screws_offset == 'INSIDE':
         # debugprint('Shift Inside')
-        shift_left_adjust = wall_base_x_thickness
+        shift_left_adjust = wall_base_x_thickness/(2/3)
         shift_right_adjust = -wall_base_x_thickness/2
         shift_down_adjust = -wall_base_y_thickness/2
         shift_up_adjust = -wall_base_y_thickness/3
