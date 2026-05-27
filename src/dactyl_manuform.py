@@ -4100,7 +4100,7 @@ def model_side(side="right"):
             shape = add([shape, ball])
 
     if plate_pcb_clear:
-        shape = difference(shape, [plate_pcb_cutouts(side=side)])
+        shape = difference(shape, plate_pcb_cutouts(side=side))
 
     main_shape = shape
 
