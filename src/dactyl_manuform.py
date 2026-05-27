@@ -4261,7 +4261,7 @@ def baseplate(wedge_angle=None, side='right'):
         if wedge_angle is not None:
             cq.Workplane('XY').add(cq.Solid.revolve(outerWire, innerWires, angleDegrees, axisStart, axisEnd))
         else:
-            inner_shape = cq.Workplane('XY').add(cq.Solid.extrudeLinear(outerWire=inner_wire, innerWires=[], vecNormal=cq.Vector(0, 0, base_thickness)))
+            inner_shape = cq.Workplane('XY').add(cq.Solid.extrudeLinear(inner_wire, [], cq.Vector(0, 0, base_thickness)))
             inner_shape = translate(inner_shape, (0, 0, -base_rim_thickness))
 
             holes = []

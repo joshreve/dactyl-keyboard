@@ -217,7 +217,7 @@ def extrude_poly(outer_poly, inner_polys=None, height=1):  # vector=(0,0,1)):
             inner_wires.append(cq.Wire.assembleEdges(item.edges().objects))
 
     return cq.Workplane('XY').add(
-        cq.Solid.extrudeLinear(outerWire=outer_wires, innerWires=inner_wires, vecNormal=cq.Vector(0, 0, height)))
+        cq.Solid.extrudeLinear(outer_wires, inner_wires, cq.Vector(0, 0, height)))
 
 
 def import_file(fname, convexity=None):
