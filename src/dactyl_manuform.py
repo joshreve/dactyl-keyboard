@@ -4307,14 +4307,64 @@ def baseplate(wedge_angle=None, side='right'):
 
 def run():
 
+    # general files
+    if oled_mount_type == 'UNDERCUT':
+        export_file(shape=oled_undercut_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_undercut_test"))
+
+    if oled_mount_type == 'SLIDING':
+        export_file(shape=oled_sliding_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_sliding_test"))
+
+    if oled_mount_type == 'CLIP':
+        oled_mount_location_xyz = (0.0, 0.0, -oled_mount_depth / 2)
+        oled_mount_rotation_xyz = (0.0, 0.0, 0.0)
+        export_file(shape=oled_clip(), fname=path.join(save_path, config_name + r"_oled_clip"))
+        export_file(shape=oled_clip_mount_frame()[1],
+                            fname=path.join(save_path, config_name + r"_oled_clip_test"))
+        export_file(shape=union((oled_clip_mount_frame()[1], oled_clip())),
+                            fname=path.join(save_path, config_name + r"_oled_clip_assy_test"))
+
+    # generate right side. Export after monoblock
     mod_r, tmb_r = model_side(side="right")
-    export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
-    export_file(shape=tmb_r, fname=path.join(save_path, config_name + r"_thumb_right"))
 
     #base = baseplate(mod_r, tmb_r, side='right')
     base = baseplate(side='right')
+
+    if monoblock:
+        if left_wall_x_offset < monoblock_spread:
+            print(f"MONOBLOCK double check left_wall_x_offset={left_wall_x_offset}")
+        # prepare right side
+        mod_r = rotate(translate(mod_r, [monoblock_spread, 0, 0]), (0, 0, monoblock_angle))
+        base = rotate(translate(base, [monoblock_spread, 0, 0]), (0, 0, monoblock_angle))
+        # cut off in the middle
+        cutdim = max(20000, monoblock_spread)
+        cutobj = translate(box(cutdim, cutdim, cutdim), (-cutdim/2, 0, 0))
+        mod_r = difference(mod_r,[cutobj])
+        base = difference(base,[cutobj])
+        
+        # left side ......... no controller ...  HACK with globals...
+        tmp_cmt = globals()['controller_mount_type']
+        globals()['controller_mount_type']  = 'None'
+        mod_l, tmb_l = model_side(side="left")
+        mod_l = rotate(translate(mod_l, [-monoblock_spread, 0, 0]), (0, 0, -monoblock_angle))
+        globals()['controller_mount_type'] = tmp_cmt
+
+        cutobj = translate(box(cutdim, cutdim, cutdim), (cutdim/2, 0, 0))
+        mod_l = difference(mod_l,[cutobj])
+        
+        # base plat
+        export_file(shape=union([mod_r, mod_l]), fname=path.join(save_path, config_name + r"_monoblock"))
+        export_file(shape=union([base, mirror(base, 'YZ')]), fname=path.join(save_path, config_name + r"_monoblock_plate"))
+
+        return
+
+
+    export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
+    export_file(shape=tmb_r, fname=path.join(save_path, config_name + r"_thumb_right"))
+
+
     export_file(shape=base, fname=path.join(save_path, config_name + r"_right_plate"))
     export_dxf(shape=base, fname=path.join(save_path, config_name + r"_right_plate"))
+
 
     if symmetry == "asymmetric":
         mod_l, tmb_l = model_side(side="left")
@@ -4335,21 +4385,6 @@ def run():
 
 
 
-
-    if oled_mount_type == 'UNDERCUT':
-        export_file(shape=oled_undercut_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_undercut_test"))
-
-    if oled_mount_type == 'SLIDING':
-        export_file(shape=oled_sliding_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_sliding_test"))
-
-    if oled_mount_type == 'CLIP':
-        oled_mount_location_xyz = (0.0, 0.0, -oled_mount_depth / 2)
-        oled_mount_rotation_xyz = (0.0, 0.0, 0.0)
-        export_file(shape=oled_clip(), fname=path.join(save_path, config_name + r"_oled_clip"))
-        export_file(shape=oled_clip_mount_frame()[1],
-                            fname=path.join(save_path, config_name + r"_oled_clip_test"))
-        export_file(shape=union((oled_clip_mount_frame()[1], oled_clip())),
-                            fname=path.join(save_path, config_name + r"_oled_clip_assy_test"))
 
 # base = baseplate()
 # export_file(shape=base, fname=path.join(save_path, config_name + r"_plate"))

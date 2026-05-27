@@ -570,5 +570,8 @@
             -6,
             5
         ]
-    ]
+    ],
+    "monoblock": true,
+    "monoblock_spread": 100,
+    "monoblock_angle": 20
 }

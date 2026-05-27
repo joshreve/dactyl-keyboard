@@ -467,6 +467,14 @@ shape_config = {
         [0, -6, 5],# NOT USED IN MOST FORMATS (7th column)
     ],
 
+    ###################################
+    ## MONOBLOCK
+    ####################################
+    #    CHECK that 'left_wall_x_offset' fits to 'monoblock_spread'
+    'monoblock': True,
+    'monoblock_spread': 100, # move outside from center: not easy to measure this number: just try...
+    'monoblock_angle': 20,    # angle in degrees for each side out of X-axis
+
 }
 
     ####################################
