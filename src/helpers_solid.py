@@ -2,9 +2,11 @@ import solid as sl
 
 debug_trace = False
 
+
 def debugprint(info):
     if debug_trace:
         print(info)
+
 
 def box(width, height, depth):
     return sl.cube([width, height, depth], center=True)
@@ -85,6 +87,7 @@ def intersect(shape1, shape2):
     else:
         return shape1
 
+
 def hull_from_points(points):
     return sl.hull()(*points)
 
@@ -111,7 +114,6 @@ def triangle_hulls(shapes):
     return union(hulls)
 
 
-
 def bottom_hull(p, height=0.001):
     debugprint("bottom_hull()")
     shape = None
@@ -125,21 +127,6 @@ def bottom_hull(p, height=0.001):
             shape = t_shape
         shape = sl.hull()(p, shape, t_shape)
     return shape
-
-def polyline(point_list):
-    return sl.polygon(point_list)
-
-
-# def project_to_plate():
-#     square = cq.Workplane('XY').rect(1000, 1000)
-#     for wire in square.wires().objects:
-#         plane = cq.Workplane('XY').add(cq.Face.makeFromWires(wire))
-
-def extrude_poly(outer_poly, inner_polys=None, height=1):
-    if inner_polys is not None:
-        return sl.linear_extrude(height=height, twist=0, convexity=0, center=True)(outer_poly, *inner_polys)
-    else:
-        return sl.linear_extrude(height=height, twist=0, convexity=0, center=True)(outer_poly)
 
 
 def import_file(fname, convexity=2):

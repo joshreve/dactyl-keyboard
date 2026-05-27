@@ -363,15 +363,12 @@ def sa_cap(Usize=1):
         pl2 = 6
         pw2 = 11
 
-    k1 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
-    k1 = extrude_poly(outer_poly=k1, height=0.1)
+    k1 = box(bw2 * 2, bl2 * 2, 0.1)
     k1 = translate(k1, (0, 0, 0.05))
-    k2 = polyline([(pw2, pl2), (pw2, -pl2), (-pw2, -pl2), (-pw2, pl2), (pw2, pl2)])
-    k2 = extrude_poly(outer_poly=k2, height=0.1)
+    k2 = box(pw2 * 2, pl2 * 2, 0.1)
     k2 = translate(k2, (0, 0, 12.0))
     if m > 0:
-        m1 = polyline([(m, m), (m, -m), (-m, -m), (-m, m), (m, m)])
-        m1 = extrude_poly(outer_poly=m1, height=0.1)
+        m1 = box(m * 2, m * 2, 0.1)
         m1 = translate(m1, (0, 0, 6.0))
         key_cap = hull_from_shapes((k1, k2, m1))
     else:
@@ -398,14 +395,10 @@ def choc_cap(Usize=1):
         pt = 1.5
         gap = 1.5
 
-    k1 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
-    k1 = extrude_poly(outer_poly=k1, height=0.1)
-    k1 = translate(k1, (0, 0, 0.05))
-    k2 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
-    k2 = extrude_poly(outer_poly=k2, height=0.1)
-    k2 = translate(k2, (0, 0, 0.05+bt))
-    k3 = polyline([(pw2, pl2), (pw2, -pl2), (-pw2, -pl2), (-pw2, pl2), (pw2, pl2)])
-    k3 = extrude_poly(outer_poly=k3, height=0.1)
+    k_box = box(bw2 * 2, bl2 * 2, 0.1)
+    k1 = translate(k_box, (0, 0, 0.05))
+    k2 = translate(k_box, (0, 0, 0.05+bt))
+    k3 = box(pw2 * 2, pl2 * 2, 0.1)
     k3 = translate(k3, (0, 0, 0.05+bt+pt))
     key_cap = hull_from_shapes((k1, k2, k3))
 
