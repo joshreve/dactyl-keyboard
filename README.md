@@ -50,7 +50,7 @@ These are the "mini" and "carbonfet" thumb clusters. Additional trackball cluste
 Feel free to try them out with by setting `'thumb_style'` to 
 `'DEFAULT'`, `'MINI'`, `'CARBONFET'`, `'MINIDOX'`, `'TRACKBALL_ORBYL'`, and `'TRACKBALL_CJ'`.
 
-Trackball features accommodate a [Perixx PERIPRO-303](https://smile.amazon.com/gp/product/B08DD6GQRV/).  Others may fit, but this was the target ball diameter for the design.  It is a little smaller than a Ploopy to try to fit better in the cluster.
+Trackball features accommodate a [Perixx PERIPRO-303](https://smile.amazon.com/gp/product/B08DD6GQRV/).  Others may fit, but this was the target ball diameter for the design.  It is a little smaller than a Ploopy to try to fit better in the cluster. They also use MR63ZZ bearings.
 
 Rendered and actual images to be added in future commits.
 
