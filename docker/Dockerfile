@@ -1,7 +1,7 @@
 FROM continuumio/miniconda3
 
 RUN apt-get update && \
-    apt-get install -y libgl1-mesa-glx gcc bash && \
+    apt-get install -y  python3-vtk7 libgl1-mesa-glx gcc bash && \
     rm -rf /var/lib/apt/lists/*
 
 

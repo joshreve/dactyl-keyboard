@@ -24,7 +24,7 @@ config_options = [
     },
     {
         'name': '{}TMB', 'vars': ['thumb_style'],
-        'vals': ['DEFAULT', 'MINIDOX', 'TRACKBALL_ORBISSYL'],
+        'vals': ['DEFAULT', 'MINIDOX', 'TRACKBALL_ORBYL'],
         'val_names': ['DEF', 'MDOX', 'ORBY']
         # 'vals': ['DEFAULT', 'MINI', 'CARBONFET', 'MINIDOX'],
         # 'val_names': ['DEF', 'MINI', 'CF', 'MDOX']
@@ -102,7 +102,7 @@ def build_release(base, configurations, engines=('solid', 'cadquery')):
 if __name__ == '__main__':
     configurations = create_config(config_options)
 
-    ENGINES = ['solid', 'cadquery']
-    # ENGINES = ['solid']
+    # ENGINES = ['solid', 'cadquery']
+    ENGINES = ['solid']
 
     build_release(base, configurations, ENGINES)
