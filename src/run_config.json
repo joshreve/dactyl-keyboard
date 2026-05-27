@@ -453,6 +453,12 @@
     "external_holder_width": 28.75,
     "external_holder_xoffset": -5.0,
     "external_holder_yoffset": -4.5,
+    "usb_holder_size": [
+        6.5,
+        10.0,
+        13.6
+    ],
+    "usb_holder_thickness": 4,
     "pcb_mount_ref_offset": [
         0,
         -5,
@@ -476,7 +482,7 @@
     "pcb_usb_hole_offset": [
         15,
         0,
-        4.5
+        6
     ],
     "wall_thinner_size": [
         34,
@@ -490,7 +496,7 @@
     "trrs_offset": [
         0,
         0,
-        1.5
+        7
     ],
     "pcb_screw_hole_size": [
         0.5,
