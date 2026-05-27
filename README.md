@@ -80,9 +80,13 @@ Message me on Reddit u/j_oshreve if you are really stuck.  I don't have much tim
 
 Added an external mount for a separate controller tray.  Looks to work with lolligag's controller trays / holders:
 
-- [Promicro V1](https://dactyl.siskam.link/loligagger-external-holder-promicro-v1.stl)
-- [Promicro V2](https://dactyl.siskam.link/loligagger-external-holder-promicro-v2.stl)
-- [Elite-C V1 ](https://dactyl.siskam.link/loligagger-external-holder-elite-c-v1.stl)
+- [Promicro V1](https://dactyl.mbugert.de/loligagger-external-holder-promicro-v1.stl)
+- [Promicro V2](https://dactyl.mbugert.de/loligagger-external-holder-promicro-v2.stl)
+- [Elite-C V1 ](https://dactyl.mbugert.de/loligagger-external-holder-elite-c-v1.stl)
+
+
+Possibly works with also this from BrownElvis
+- [Promicro V3](https://dactyl.mbugert.de/loligagger-external-holder-promicro-v3-extended.stl)
 
 Just use `controller_mount_type = 'EXTERNAL'`.
 
