@@ -205,7 +205,7 @@ You can install the application in a regular python environment, but it is not r
 ## Origin
 ![Imgur](http://i.imgur.com/LdjEhrR.jpg)
 
-The main change is that the thumb cluster was adapted from the [ManuForm keyboard](https://github.com/jeffgran/ManuForm) ([geekhack](https://geekhack.org/index.php?topic=46015.0)). The walls were changed to just drop to the floor. The keyboard is paramaterized to allow adjusting the following: 
+The main change is that the thumb cluster was adapted from the [ManuForm keyboard](https://github.com/jeffgran/ManuForm) ([geekhack](https://geekhack.org/index.php?topic=46015.0)). The walls were changed to just drop to the floor. The keyboard is parameterized to allow adjusting the following: 
 
 * Rows: 4 - 6 
 * Columns: 5 and up
